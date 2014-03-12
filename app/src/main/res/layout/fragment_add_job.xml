@@ -6,9 +6,23 @@
               android:layout_height="match_parent">
 
     <Button
+            android:id="@+id/select"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Select Image"/>
+
+    <ImageView
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="gone"/>
+
+    <Button
             android:id="@+id/submit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Submit"/>
+            android:text="Submit"
+            android:visibility="gone"/>
 
 </LinearLayout>

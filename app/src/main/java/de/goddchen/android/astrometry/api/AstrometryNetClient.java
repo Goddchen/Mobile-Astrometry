@@ -8,10 +8,12 @@ import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
+import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Map;
 
 import de.goddchen.android.astrometry.R;
@@ -87,9 +89,18 @@ public class AstrometryNetClient {
 
     public void upload(Uri uri, FutureCallback<JsonObject> callback) throws Exception {
         if ("file".equals(uri.getScheme())) {
-            Ion.with(mContext, "")
+            Ion.with(mContext, mContext.getString(R.string.astrometry_server_base_url) + "upload/")
                     .setMultipartParameter("request-json", newSessionJson().toString())
                     .setMultipartFile("file", new File(uri.getPath()))
+                    .asJsonObject()
+                    .setCallback(callback);
+        } else if ("content".equals(uri.getScheme())) {
+            File file = mContext.getFileStreamPath("upload");
+            IOUtils.copy(mContext.getContentResolver().openInputStream(uri),
+                    new FileOutputStream(file));
+            Ion.with(mContext, mContext.getString(R.string.astrometry_server_base_url) + "upload/")
+                    .setMultipartParameter("request-json", newSessionJson().toString())
+                    .setMultipartFile("file", file)
                     .asJsonObject()
                     .setCallback(callback);
         } else {
