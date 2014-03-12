@@ -10,6 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -18,6 +19,7 @@ import com.koushikdutta.ion.Ion;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.util.Comparator;
 import java.util.List;
 
 import de.goddchen.android.astrometry.Application;
@@ -61,10 +63,70 @@ public class JobListFragment extends ListFragment implements AdapterView.OnItemC
         try {
             mJobs = Application.EVENT_DAO.queryForAll();
             setListAdapter(new JobAdapter(getActivity(), mJobs));
+            ((ArrayAdapter<Job>) getListAdapter()).sort(new Comparator<Job>() {
+                @Override
+                public int compare(Job lhs, Job rhs) {
+                    return -(lhs.id.compareToIgnoreCase(rhs.id));
+                }
+            });
             //TODO properly update adapter
+            for (final Job job : mJobs) {
+                if (job.status == null) {
+                    //Try to update job
+                    try {
+                        AstrometryNetClient.with(getActivity())
+                                .request("jobs/" + job.id + "/info", null,
+                                        new FutureCallback<JsonObject>() {
+
+                                            @Override
+                                            public void onCompleted(Exception e,
+                                                                    JsonObject result) {
+                                                if (e != null) {
+                                                    Log.e(Application.Constants.LOG_TAG,
+                                                            "Error getting job infos", e);
+                                                } else {
+                                                    try {
+                                                        updateJobInfo(job.id, result);
+                                                    } catch (SQLException e1) {
+                                                        Log.e(Application.Constants.LOG_TAG,
+                                                                "Error updating job", e1);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                );
+                    } catch (Exception e) {
+                        Log.e(Application.Constants.LOG_TAG, "Error getting job infos", e);
+                    }
+                }
+            }
         } catch (SQLException e) {
             Log.e(Application.Constants.LOG_TAG, "Error getting jobs", e);
         }
+    }
+
+    private void updateJobInfo(String id, JsonObject json) throws SQLException {
+        Job job = new Job();
+        job.id = id;
+        job.status = json.get("status").getAsString();
+        JsonArray machineTags = json.get("machine_tags").getAsJsonArray();
+        job.machine_tags = new String[machineTags.size()];
+        for (int i = 0; i < machineTags.size(); i++) {
+            job.machine_tags[i] = machineTags.get(i).getAsString();
+        }
+        JsonArray objects = json.get("objects_in_field").getAsJsonArray();
+        job.objects_in_field = new String[objects.size()];
+        for (int i = 0; i < objects.size(); i++) {
+            job.objects_in_field[i] = objects.get(i).getAsString();
+        }
+        job.original_filename = json.get("original_filename").getAsString();
+        JsonArray tags = json.get("tags").getAsJsonArray();
+        job.tags = new String[tags.size()];
+        for (int i = 0; i < tags.size(); i++) {
+            job.tags[i] = tags.get(i).getAsString();
+        }
+        Application.EVENT_DAO.createOrUpdate(job);
+        EventBus.getDefault().post(new JobsUpdatedEvent());
     }
 
     @Override
