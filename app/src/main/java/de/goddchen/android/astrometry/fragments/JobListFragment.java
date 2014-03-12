@@ -66,12 +66,12 @@ public class JobListFragment extends ListFragment implements AdapterView.OnItemC
             ((ArrayAdapter<Job>) getListAdapter()).sort(new Comparator<Job>() {
                 @Override
                 public int compare(Job lhs, Job rhs) {
-                    return -(lhs.id.compareToIgnoreCase(rhs.id));
+                    return -(lhs.id.compareTo(rhs.id));
                 }
             });
             //TODO properly update adapter
             for (final Job job : mJobs) {
-                if (job.status == null) {
+                if (!"success".equals(job.status)) {
                     //Try to update job
                     try {
                         AstrometryNetClient.with(getActivity())
@@ -105,7 +105,7 @@ public class JobListFragment extends ListFragment implements AdapterView.OnItemC
         }
     }
 
-    private void updateJobInfo(String id, JsonObject json) throws SQLException {
+    private void updateJobInfo(Long id, JsonObject json) throws SQLException {
         Job job = new Job();
         job.id = id;
         job.status = json.get("status").getAsString();
@@ -143,7 +143,7 @@ public class JobListFragment extends ListFragment implements AdapterView.OnItemC
                                 JsonArray jobs = result.get("jobs").getAsJsonArray();
                                 for (int i = 0; i < jobs.size(); i++) {
                                     Job job = new Job();
-                                    job.id = "" + jobs.get(i).getAsInt();
+                                    job.id = jobs.get(i).getAsLong();
                                     try {
                                         Application.EVENT_DAO.createIfNotExists(job);
                                     } catch (SQLException e1) {

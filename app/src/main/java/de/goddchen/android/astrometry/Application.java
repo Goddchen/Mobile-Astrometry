@@ -19,7 +19,7 @@ import de.goddchen.android.astrometry.data.Job;
  */
 public class Application extends android.app.Application {
 
-    public static Dao<Job, String> EVENT_DAO;
+    public static Dao<Job, Long> EVENT_DAO;
 
     @Override
     public void onCreate() {

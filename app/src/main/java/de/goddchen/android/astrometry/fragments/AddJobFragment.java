@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 
@@ -87,35 +88,58 @@ public class AddJobFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void getJobForSubmission(long submissionID) {
+    private void getJobForSubmission(final long submissionID) {
         try {
             AstrometryNetClient.with(getActivity())
-                    .request("submissions/" + submissionID, null, new FutureCallback<JsonObject>() {
-                        @Override
-                        public void onCompleted(Exception e, JsonObject result) {
-                            LoadingDialogFragment.safeDismiss(getFragmentManager(),
-                                    "dialog-loading");
-                            if (e != null) {
-                                Log.e(Application.Constants.LOG_TAG, "Error getting job infos", e);
-                            } else {
-                                //Sample response:
-                                // {"processing_started": "2014-03-12 11:51:57.907107",
-                                // "job_calibrations": [[246083, 168575]], "jobs": [246083],
-                                // "processing_finished": "2014-03-12 11:51:58.304619",
-                                // "user": 2870, "user_images": [232377]}
-                                Job job = new Job();
-                                job.id = "" + result.get("jobs").getAsJsonArray().get(0)
-                                        .getAsLong();
-                                try {
-                                    Application.EVENT_DAO.create(job);
-                                    EventBus.getDefault().post(new JobsUpdatedEvent());
-                                } catch (SQLException e1) {
-                                    Log.e(Application.Constants.LOG_TAG,
-                                            "Error creating job", e1);
+                    .request("submissions/" + submissionID, null,
+                            new FutureCallback<JsonObject>() {
+                                @Override
+                                public void onCompleted(Exception e, JsonObject result) {
+                                    if (e != null) {
+                                        Log.e(Application.Constants.LOG_TAG,
+                                                "Error getting job infos", e);
+                                    } else {
+                                        //Sample response:
+                                        // {"processing_started": "2014-03-12 11:51:57
+                                        // .907107",
+                                        // "job_calibrations": [[246083, 168575]],
+                                        // "jobs": [246083],
+                                        // "processing_finished": "2014-03-12 11:51:58
+                                        // .304619",
+                                        // "user": 2870, "user_images": [232377]}
+                                        Log.d(Application.Constants.LOG_TAG,
+                                                "Response: " + result.toString());
+                                        JsonArray jobs = result.get("jobs").getAsJsonArray();
+                                        if (jobs.size() == 0) {
+                                            Log.d(Application.Constants.LOG_TAG,
+                                                    "Job has not started to process, waiting...");
+                                            try {
+                                                Thread.sleep(3000);
+                                            } catch (InterruptedException e1) {
+                                                Log.w(Application.Constants.LOG_TAG,
+                                                        "Error sleeping");
+                                            }
+                                            getJobForSubmission(submissionID);
+                                        } else {
+                                            LoadingDialogFragment.safeDismiss(getFragmentManager(),
+                                                    "dialog-loading");
+                                            Job job = new Job();
+                                            job.id = result.get("jobs").getAsJsonArray().get
+                                                    (0).getAsLong();
+                                            try {
+                                                Application.EVENT_DAO.create(job);
+                                                EventBus.getDefault().post(new
+                                                        JobsUpdatedEvent());
+                                                getFragmentManager().popBackStack();
+                                            } catch (SQLException e1) {
+                                                Log.e(Application.Constants.LOG_TAG,
+                                                        "Error creating job", e1);
+                                            }
+                                        }
+                                    }
                                 }
                             }
-                        }
-                    });
+                    );
         } catch (Exception e) {
             LoadingDialogFragment.safeDismiss(getFragmentManager(), "dialog-loading");
             Log.e(Application.Constants.LOG_TAG, "Error getting job infos", e);

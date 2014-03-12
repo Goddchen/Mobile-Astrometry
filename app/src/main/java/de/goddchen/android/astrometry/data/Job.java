@@ -14,7 +14,7 @@ import java.util.Arrays;
 public class Job implements Serializable {
 
     @DatabaseField(id = true, generatedId = false)
-    public String id;
+    public Long id;
     @DatabaseField
     public String status;
     @DatabaseField
@@ -25,6 +25,10 @@ public class Job implements Serializable {
     public String[] tags;
     @DatabaseField(dataType = DataType.SERIALIZABLE)
     public String[] objects_in_field;
+    @DatabaseField
+    public long submissionID;
+    @DatabaseField
+    public long imageID;
 
     public Job() {
 
