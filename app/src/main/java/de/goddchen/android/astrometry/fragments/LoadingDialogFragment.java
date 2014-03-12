@@ -26,16 +26,6 @@ public class LoadingDialogFragment extends DialogFragment {
         return dialog;
     }
 
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        ProgressDialog dialog = new ProgressDialog(getActivity());
-        dialog.setMessage("Please wait...");
-        dialog.setCancelable(false);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        return dialog;
-    }
-
     public static void safeDismiss(FragmentManager fragmentManager, String tag) {
         try {
             ((LoadingDialogFragment) fragmentManager.findFragmentByTag(tag)).dismiss();
