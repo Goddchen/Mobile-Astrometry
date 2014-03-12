@@ -2,4 +2,6 @@
 <resources>
     <string name="id_astrometry_api_key">cgutxjemqwvgdibq</string>
     <string name="astrometry_server_base_url">http://nova.astrometry.net/api/</string>
+    <string name="astrometry_annotated_image_url">http://nova.astrometry.net/annotated_display/%s</string>
+    <string name="astrometry_original_image_url">http://nova.astrometry.net/image/%s</string>
 </resources>
