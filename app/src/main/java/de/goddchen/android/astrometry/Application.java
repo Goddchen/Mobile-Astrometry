@@ -21,10 +21,6 @@ public class Application extends android.app.Application {
 
     public static Dao<Job, String> EVENT_DAO;
 
-    public static class Constants {
-        public static final String LOG_TAG = "Mobile Astrometry";
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -57,5 +53,14 @@ public class Application extends android.app.Application {
         } catch (SQLException e) {
             Log.e(Constants.LOG_TAG, "Error creating DAO", e);
         }
+    }
+
+    public static class Constants {
+        public static final String LOG_TAG = "Mobile Astrometry";
+    }
+
+    public static class Preferences {
+        public static final String PREF_SESSION = "session";
+        public static final String PREF_APIKEY = "apikey";
     }
 }

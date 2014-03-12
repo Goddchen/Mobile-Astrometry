@@ -16,14 +16,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Map;
 
+import de.goddchen.android.astrometry.Application;
 import de.goddchen.android.astrometry.R;
 
 /**
  * Created by Goddchen on 12.03.14.
  */
 public class AstrometryNetClient {
-
-    private static String PREF_SESSION = "api.session";
 
     private Context mContext;
 
@@ -36,7 +35,7 @@ public class AstrometryNetClient {
         AstrometryNetClient client = new AstrometryNetClient();
         client.mContext = context;
         client.mSession = PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(PREF_SESSION, null);
+                .getString(Application.Preferences.PREF_SESSION, null);
         return client;
     }
 
@@ -45,7 +44,8 @@ public class AstrometryNetClient {
         //ensure that we have a session
         if (mSession == null) {
             JSONObject data = new JSONObject();
-            data.put("apikey", mContext.getString(R.string.id_astrometry_api_key));
+            data.put("apikey", PreferenceManager.getDefaultSharedPreferences(mContext)
+                    .getString(Application.Preferences.PREF_APIKEY, null));
             Ion.with(mContext, mContext.getString(R.string.astrometry_server_base_url) +
                     "login")
                     .setBodyParameter("request-json", data.toString())
@@ -62,7 +62,8 @@ public class AstrometryNetClient {
                             } else {
                                 String session = result.get("session").getAsString();
                                 PreferenceManager.getDefaultSharedPreferences(mContext)
-                                        .edit().putString(PREF_SESSION, session)
+                                        .edit().putString(Application.Preferences.PREF_SESSION,
+                                        session)
                                         .commit();
                                 mSession = session;
                                 try {
