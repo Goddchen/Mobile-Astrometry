@@ -1,0 +1,106 @@
+package de.goddchen.android.astrometry.api;
+
+import android.content.Context;
+import android.net.Uri;
+import android.preference.PreferenceManager;
+
+import com.google.gson.JsonObject;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.util.Map;
+
+import de.goddchen.android.astrometry.R;
+
+/**
+ * Created by Goddchen on 12.03.14.
+ */
+public class AstrometryNetClient {
+
+    private static String PREF_SESSION = "api.session";
+
+    private Context mContext;
+
+    private String mSession;
+
+    public AstrometryNetClient() {
+    }
+
+    public static AstrometryNetClient with(Context context) {
+        AstrometryNetClient client = new AstrometryNetClient();
+        client.mContext = context;
+        client.mSession = PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(PREF_SESSION, null);
+        return client;
+    }
+
+    public void request(final String service, final Map<String, String> args,
+                        final FutureCallback<JsonObject> callback) throws Exception {
+        //ensure that we have a session
+        if (mSession == null) {
+            JSONObject data = new JSONObject();
+            data.put("apikey", mContext.getString(R.string.id_astrometry_api_key));
+            Ion.with(mContext, mContext.getString(R.string.astrometry_server_base_url) +
+                    "login")
+                    .setBodyParameter("request-json", data.toString())
+                    .asJsonObject()
+                    .setCallback(new FutureCallback<JsonObject>() {
+                        @Override
+                        public void onCompleted(Exception e, JsonObject result) {
+                            if (e != null
+                                    || !result.has("status")
+                                    || !result.has("session")
+                                    || !"success".equals(result.get("status")
+                                    .getAsString())) {
+                                //Log error
+                            } else {
+                                String session = result.get("session").getAsString();
+                                PreferenceManager.getDefaultSharedPreferences(mContext)
+                                        .edit().putString(PREF_SESSION, session)
+                                        .commit();
+                                mSession = session;
+                                try {
+                                    request(service, args, callback);
+                                } catch (Exception e1) {
+                                    //Log error
+                                }
+                            }
+                        }
+                    });
+        } else {
+            JSONObject data = newSessionJson();
+            if (args != null) {
+                for (Map.Entry<String, String> entry : args.entrySet()) {
+                    data.put(entry.getKey(), entry.getValue());
+                }
+            }
+            Ion.with(mContext, mContext.getString(R.string.astrometry_server_base_url) + service)
+                    .setBodyParameter("request-json", data.toString())
+                    .asJsonObject()
+                    .setCallback(callback);
+        }
+    }
+
+    public void upload(Uri uri, FutureCallback<JsonObject> callback) throws Exception {
+        if ("file".equals(uri.getScheme())) {
+            Ion.with(mContext, "")
+                    .setMultipartParameter("request-json", newSessionJson().toString())
+                    .setMultipartFile("file", new File(uri.getPath()))
+                    .asJsonObject()
+                    .setCallback(callback);
+        } else {
+            throw new Exception("Unsupported uri: " + uri.toString());
+        }
+    }
+
+    private JSONObject newSessionJson() throws JSONException {
+        JSONObject data = new JSONObject();
+        data.put("session", mSession);
+        return data;
+    }
+
+}
