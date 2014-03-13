@@ -18,9 +18,9 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_main);
-        String apikey = PreferenceManager.getDefaultSharedPreferences(this)
-                .getString(Application.Preferences.PREF_APIKEY, null);
-        if (apikey == null) {
+        String session = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(Application.Preferences.PREF_SESSION, null);
+        if (session == null) {
             getFragmentManager().beginTransaction()
                     .replace(android.R.id.content, LoginFragment.newInstance(), "login")
                     .commit();

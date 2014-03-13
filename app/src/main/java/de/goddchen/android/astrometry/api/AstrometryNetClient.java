@@ -109,6 +109,17 @@ public class AstrometryNetClient {
         }
     }
 
+    public void login(String apikey, FutureCallback<JsonObject> callback) throws JSONException {
+        JSONObject data = new JSONObject();
+        data.put("apikey", PreferenceManager.getDefaultSharedPreferences(mContext)
+                .getString(Application.Preferences.PREF_APIKEY, null));
+        Ion.with(mContext, mContext.getString(R.string.astrometry_server_base_url) +
+                "login")
+                .setBodyParameter("request-json", data.toString())
+                .asJsonObject()
+                .setCallback(callback);
+    }
+
     private JSONObject newSessionJson() throws JSONException {
         JSONObject data = new JSONObject();
         data.put("session", mSession);

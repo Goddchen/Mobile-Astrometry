@@ -4,6 +4,7 @@ import android.app.ListFragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,6 +15,7 @@ import android.widget.ArrayAdapter;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.j256.ormlite.table.TableUtils;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
@@ -180,6 +182,19 @@ public class JobListFragment extends ListFragment implements AdapterView.OnItemC
             getFragmentManager().beginTransaction()
                     .replace(android.R.id.content, AddJobFragment.newInstance(), "add-job")
                     .addToBackStack("add-job")
+                    .commit();
+            return true;
+        } else if (id == R.id.logout) {
+            PreferenceManager.getDefaultSharedPreferences(getActivity())
+                    .edit().remove(Application.Preferences.PREF_SESSION)
+                    .commit();
+            try {
+                TableUtils.clearTable(Application.EVENT_DAO.getConnectionSource(), Job.class);
+            } catch (SQLException e) {
+                Log.e(Application.Constants.LOG_TAG, "Error clearing jobs table", e);
+            }
+            getFragmentManager().beginTransaction()
+                    .replace(android.R.id.content, LoginFragment.newInstance(), "login")
                     .commit();
             return true;
         }
