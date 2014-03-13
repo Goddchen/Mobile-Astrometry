@@ -38,8 +38,6 @@ import de.greenrobot.event.EventBus;
  */
 public class JobListFragment extends ListFragment implements AdapterView.OnItemClickListener {
 
-    private List<Job> mJobs;
-
     public static JobListFragment newInstance() {
         JobListFragment fragment = new JobListFragment();
         return fragment;
@@ -64,8 +62,8 @@ public class JobListFragment extends ListFragment implements AdapterView.OnItemC
 
     private void updateUI() {
         try {
-            mJobs = Application.EVENT_DAO.queryForAll();
-            setListAdapter(new JobAdapter(getActivity(), mJobs));
+            final List<Job> jobs = Application.EVENT_DAO.queryForAll();
+            setListAdapter(new JobAdapter(getActivity(), jobs));
             ((ArrayAdapter<Job>) getListAdapter()).sort(new Comparator<Job>() {
                 @Override
                 public int compare(Job lhs, Job rhs) {
@@ -73,7 +71,7 @@ public class JobListFragment extends ListFragment implements AdapterView.OnItemC
                 }
             });
             //TODO properly update adapter
-            for (final Job job : mJobs) {
+            for (final Job job : jobs) {
                 if (!"success".equals(job.status)) {
                     //Try to update job
                     try {
@@ -206,14 +204,13 @@ public class JobListFragment extends ListFragment implements AdapterView.OnItemC
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Job job = (Job) getListAdapter().getItem(position);
         String imageUrl = getString(R.string.astrometry_annotated_image_url, job.id);
-        LoadingDialogFragment.newInstance().show(getFragmentManager(), "dialog-loading");
+        LoadingDialogFragment.newInstance().show(getFragmentManager());
         Ion.with(getActivity(), imageUrl)
                 .write(getActivity().getFileStreamPath("download"))
                 .setCallback(new FutureCallback<File>() {
                     @Override
                     public void onCompleted(Exception e, File result) {
-                        LoadingDialogFragment.safeDismiss(getFragmentManager(),
-                                "dialog-loading");
+                        LoadingDialogFragment.safeDismiss(getFragmentManager());
                         if (e != null) {
                             Toast.makeText(getActivity(),
                                     getString(R.string.toast_error_try_again),

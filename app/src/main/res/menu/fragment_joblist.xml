@@ -4,13 +4,13 @@
 
     <item
             android:id="@+id/add_job"
-            android:title="Add Job"
+            android:title="@string/menu_add_job"
             android:icon="@android:drawable/ic_menu_add"
             android:showAsAction="ifRoom"/>
 
     <item
             android:id="@+id/logout"
-            android:title="Logout"
+            android:title="@string/menu_logout"
             android:showAsAction="never"/>
 
 </menu>

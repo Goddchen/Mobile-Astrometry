@@ -9,7 +9,7 @@
             android:id="@+id/select"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Select Image"/>
+            android:text="@string/select_image"/>
 
     <ImageView
             android:id="@+id/image"
@@ -22,7 +22,7 @@
             android:id="@+id/submit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Submit"
+            android:text="@string/submit"
             android:visibility="gone"/>
 
 </LinearLayout>

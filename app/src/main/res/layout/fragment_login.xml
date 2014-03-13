@@ -8,17 +8,18 @@
     <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Hints about how to get the apikey"/>
+            android:text="@string/hint_apikey"/>
 
     <EditText
             android:id="@+id/apikey"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:inputType="text"/>
 
     <Button
             android:id="@+id/submit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Login"/>
+            android:text="@string/login"/>
 
 </LinearLayout>

@@ -55,15 +55,14 @@ public class AddJobFragment extends Fragment implements View.OnClickListener {
         int id = v.getId();
         if (id == R.id.submit) {
             try {
-                LoadingDialogFragment.newInstance().show(getFragmentManager(), "dialog-loading");
+                LoadingDialogFragment.newInstance().show(getFragmentManager());
                 AstrometryNetClient.with(getActivity())
                         .upload(mImageUri,
                                 new FutureCallback<JsonObject>() {
                                     @Override
                                     public void onCompleted(Exception e, JsonObject result) {
                                         if (e != null) {
-                                            LoadingDialogFragment.safeDismiss(getFragmentManager(),
-                                                    "dialog-loading");
+                                            LoadingDialogFragment.safeDismiss(getFragmentManager());
                                             Log.e(Application.Constants.LOG_TAG,
                                                     "Error uploading photo", e);
                                             Toast.makeText(getActivity(),
@@ -81,8 +80,7 @@ public class AddJobFragment extends Fragment implements View.OnClickListener {
                                 }
                         );
             } catch (Exception e) {
-                LoadingDialogFragment.safeDismiss(getFragmentManager(),
-                        "dialog-loading");
+                LoadingDialogFragment.safeDismiss(getFragmentManager());
                 Log.e(Application.Constants.LOG_TAG, "Error uploading photo", e);
                 Toast.makeText(getActivity(),
                         getString(R.string.toast_error_try_again),
@@ -131,8 +129,7 @@ public class AddJobFragment extends Fragment implements View.OnClickListener {
                                             }
                                             getJobForSubmission(submissionID);
                                         } else {
-                                            LoadingDialogFragment.safeDismiss(getFragmentManager(),
-                                                    "dialog-loading");
+                                            LoadingDialogFragment.safeDismiss(getFragmentManager());
                                             Job job = new Job();
                                             job.id = result.get("jobs").getAsJsonArray().get
                                                     (0).getAsLong();
@@ -154,7 +151,7 @@ public class AddJobFragment extends Fragment implements View.OnClickListener {
             Toast.makeText(getActivity(),
                     getString(R.string.toast_error_try_again),
                     Toast.LENGTH_SHORT).show();
-            LoadingDialogFragment.safeDismiss(getFragmentManager(), "dialog-loading");
+            LoadingDialogFragment.safeDismiss(getFragmentManager());
             Log.e(Application.Constants.LOG_TAG, "Error getting job infos", e);
         }
     }

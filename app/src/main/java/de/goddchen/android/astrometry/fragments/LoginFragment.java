@@ -60,14 +60,13 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                         .edit()
                         .putString(Application.Preferences.PREF_APIKEY, apikey)
                         .commit();
-                LoadingDialogFragment.newInstance().show(getFragmentManager(), "dialog-loading");
+                LoadingDialogFragment.newInstance().show(getFragmentManager());
                 try {
                     AstrometryNetClient.with(getActivity()).login(apikey,
                             new FutureCallback<JsonObject>() {
                                 @Override
                                 public void onCompleted(Exception e, JsonObject result) {
-                                    LoadingDialogFragment.safeDismiss(getFragmentManager(),
-                                            "dialog-loading");
+                                    LoadingDialogFragment.safeDismiss(getFragmentManager());
                                     if (e != null
                                             || !result.has("status")
                                             || !result.has("session")
@@ -95,7 +94,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                             }
                     );
                 } catch (JSONException e) {
-                    LoadingDialogFragment.safeDismiss(getFragmentManager(), "dialog-loading");
+                    LoadingDialogFragment.safeDismiss(getFragmentManager());
                     Log.e(Application.Constants.LOG_TAG, "Error logging in", e);
                     Toast.makeText(getActivity(), getString(R.string.toast_error_try_again),
                             Toast.LENGTH_SHORT).show();

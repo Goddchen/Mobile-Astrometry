@@ -3,6 +3,7 @@ package de.goddchen.android.astrometry.api;
 import android.content.Context;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
@@ -28,7 +29,7 @@ public class AstrometryNetClient {
 
     private String mSession;
 
-    public AstrometryNetClient() {
+    private AstrometryNetClient() {
     }
 
     public static AstrometryNetClient with(Context context) {
@@ -58,7 +59,7 @@ public class AstrometryNetClient {
                                     || !result.has("session")
                                     || !"success".equals(result.get("status")
                                     .getAsString())) {
-                                //Log error
+                                Log.e(Application.Constants.LOG_TAG, "Error during request", e);
                             } else {
                                 String session = result.get("session").getAsString();
                                 PreferenceManager.getDefaultSharedPreferences(mContext)
@@ -69,7 +70,8 @@ public class AstrometryNetClient {
                                 try {
                                     request(service, args, callback);
                                 } catch (Exception e1) {
-                                    //Log error
+                                    Log.e(Application.Constants.LOG_TAG,
+                                            "Error during request", e1);
                                 }
                             }
                         }
@@ -111,8 +113,7 @@ public class AstrometryNetClient {
 
     public void login(String apikey, FutureCallback<JsonObject> callback) throws JSONException {
         JSONObject data = new JSONObject();
-        data.put("apikey", PreferenceManager.getDefaultSharedPreferences(mContext)
-                .getString(Application.Preferences.PREF_APIKEY, null));
+        data.put("apikey", apikey);
         Ion.with(mContext, mContext.getString(R.string.astrometry_server_base_url) +
                 "login")
                 .setBodyParameter("request-json", data.toString())
