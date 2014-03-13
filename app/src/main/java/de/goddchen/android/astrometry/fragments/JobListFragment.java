@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -214,6 +215,9 @@ public class JobListFragment extends ListFragment implements AdapterView.OnItemC
                         LoadingDialogFragment.safeDismiss(getFragmentManager(),
                                 "dialog-loading");
                         if (e != null) {
+                            Toast.makeText(getActivity(),
+                                    getString(R.string.toast_error_try_again),
+                                    Toast.LENGTH_SHORT).show();
                             Log.e(Application.Constants.LOG_TAG, "Error downloading image", e);
                         } else {
                             result.setReadable(true, false);

@@ -2,5 +2,7 @@
 <resources>
 
     <string name="app_name">Mobile Astrometry</string>
+    <string name="toast_enter_apikey">You have to enter your API key!</string>
+    <string name="toast_error_try_again">There was an error, please try again!</string>
 
 </resources>

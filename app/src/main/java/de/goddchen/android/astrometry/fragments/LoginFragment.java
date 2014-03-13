@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
@@ -51,7 +52,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         if (id == R.id.submit) {
             EditText apikeyEditText = (EditText) getView().findViewById(R.id.apikey);
             if (apikeyEditText.length() == 0) {
-                //TODO show error
+                Toast.makeText(getActivity(), getString(R.string.toast_enter_apikey),
+                        Toast.LENGTH_SHORT).show();
             } else {
                 String apikey = apikeyEditText.getText().toString();
                 PreferenceManager.getDefaultSharedPreferences(getActivity())
@@ -73,6 +75,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                                             .getAsString())) {
                                         Log.e(Application.Constants.LOG_TAG,
                                                 "Error logging in", e);
+                                        Toast.makeText(getActivity(),
+                                                getString(R.string.toast_error_try_again),
+                                                Toast.LENGTH_SHORT).show();
                                     } else {
                                         String session = result.get("session").getAsString();
                                         PreferenceManager.getDefaultSharedPreferences(getActivity())
@@ -92,7 +97,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 } catch (JSONException e) {
                     LoadingDialogFragment.safeDismiss(getFragmentManager(), "dialog-loading");
                     Log.e(Application.Constants.LOG_TAG, "Error logging in", e);
-                    //TODO show error
+                    Toast.makeText(getActivity(), getString(R.string.toast_error_try_again),
+                            Toast.LENGTH_SHORT).show();
                 }
             }
         }

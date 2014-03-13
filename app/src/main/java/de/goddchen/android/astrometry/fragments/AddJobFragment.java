@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -65,6 +66,9 @@ public class AddJobFragment extends Fragment implements View.OnClickListener {
                                                     "dialog-loading");
                                             Log.e(Application.Constants.LOG_TAG,
                                                     "Error uploading photo", e);
+                                            Toast.makeText(getActivity(),
+                                                    getString(R.string.toast_error_try_again),
+                                                    Toast.LENGTH_SHORT).show();
                                         } else {
                                             //Get submission id to get job id...
                                             //Sample response:
@@ -80,6 +84,9 @@ public class AddJobFragment extends Fragment implements View.OnClickListener {
                 LoadingDialogFragment.safeDismiss(getFragmentManager(),
                         "dialog-loading");
                 Log.e(Application.Constants.LOG_TAG, "Error uploading photo", e);
+                Toast.makeText(getActivity(),
+                        getString(R.string.toast_error_try_again),
+                        Toast.LENGTH_SHORT).show();
             }
         } else if (id == R.id.select) {
             Intent intent = new Intent(Intent.ACTION_PICK);
@@ -98,6 +105,9 @@ public class AddJobFragment extends Fragment implements View.OnClickListener {
                                     if (e != null) {
                                         Log.e(Application.Constants.LOG_TAG,
                                                 "Error getting job infos", e);
+                                        Toast.makeText(getActivity(),
+                                                getString(R.string.toast_error_try_again),
+                                                Toast.LENGTH_SHORT).show();
                                     } else {
                                         //Sample response:
                                         // {"processing_started": "2014-03-12 11:51:57
@@ -141,6 +151,9 @@ public class AddJobFragment extends Fragment implements View.OnClickListener {
                             }
                     );
         } catch (Exception e) {
+            Toast.makeText(getActivity(),
+                    getString(R.string.toast_error_try_again),
+                    Toast.LENGTH_SHORT).show();
             LoadingDialogFragment.safeDismiss(getFragmentManager(), "dialog-loading");
             Log.e(Application.Constants.LOG_TAG, "Error getting job infos", e);
         }
