@@ -51,6 +51,18 @@ public class AddJobFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().getActionBar().setDisplayHomeAsUpEnabled(false);
+    }
+
+    @Override
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.submit) {

@@ -6,9 +6,19 @@
     <string name="toast_error_try_again">There was an error, please try again!</string>
     <string name="menu_add_job">Add Job</string>
     <string name="menu_logout">Logout</string>
-    <string name="hint_apikey">Hints about how to get the apikey</string>
+    <string name="hint_apikey"><![CDATA[In order to use this app and the awesome free service of
+        Astrometry.net, you have to enter your personal API key.<br/><br/>
+
+        You can find this key easily if you go the <a
+                href="http://nova.astrometry.net/">Astrometry.net website</a>, login and go to
+        Dashboard / My Profile. You API key is listed under "my API key" in green font.<br/><br/>
+
+        Alternatively, follow <a href="http://nova.astrometry.net/api_help">this link</a> and
+        login to see your API key directly.]]>
+    </string>
     <string name="select_image">Select Image</string>
     <string name="submit">Submit</string>
     <string name="login">Login</string>
+    <string name="hint_enter_apikey">Enter your API key</string>
 
 </resources>

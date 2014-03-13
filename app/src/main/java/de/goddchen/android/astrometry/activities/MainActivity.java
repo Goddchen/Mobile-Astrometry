@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.MenuItem;
 
 import com.flurry.android.FlurryAgent;
 
@@ -17,16 +18,16 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
         String session = PreferenceManager.getDefaultSharedPreferences(this)
                 .getString(Application.Preferences.PREF_SESSION, null);
         if (session == null) {
             getFragmentManager().beginTransaction()
-                    .replace(android.R.id.content, LoginFragment.newInstance(), "login")
+                    .replace(R.id.fragment, LoginFragment.newInstance(), "login")
                     .commit();
         } else {
             getFragmentManager().beginTransaction()
-                    .replace(android.R.id.content, JobListFragment.newInstance(), "job-list")
+                    .replace(R.id.fragment, JobListFragment.newInstance(), "job-list")
                     .commit();
         }
     }
@@ -49,5 +50,15 @@ public class MainActivity extends Activity {
         } catch (Exception e) {
             Log.w(Application.Constants.LOG_TAG, "Error stopping Flurry", e);
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            getFragmentManager().popBackStack();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

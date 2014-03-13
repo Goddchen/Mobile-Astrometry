@@ -165,6 +165,13 @@ public class JobListFragment extends ListFragment implements AdapterView.OnItemC
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         getListView().setOnItemClickListener(this);
+        int verticalPadding = (int) getResources().getDimension(R.dimen.activity_vertical_margin);
+        int horizontalPadding = (int) getResources().getDimension(R.dimen
+                .activity_horizontal_margin);
+        getListView().setPadding(horizontalPadding, verticalPadding, horizontalPadding,
+                verticalPadding);
+        getListView().setClipToPadding(false);
+        getListView().setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
         updateUI();
     }
 
@@ -179,7 +186,7 @@ public class JobListFragment extends ListFragment implements AdapterView.OnItemC
         int id = item.getItemId();
         if (id == R.id.add_job) {
             getFragmentManager().beginTransaction()
-                    .replace(android.R.id.content, AddJobFragment.newInstance(), "add-job")
+                    .replace(R.id.fragment, AddJobFragment.newInstance(), "add-job")
                     .addToBackStack("add-job")
                     .commit();
             return true;
@@ -193,7 +200,7 @@ public class JobListFragment extends ListFragment implements AdapterView.OnItemC
                 Log.e(Application.Constants.LOG_TAG, "Error clearing jobs table", e);
             }
             getFragmentManager().beginTransaction()
-                    .replace(android.R.id.content, LoginFragment.newInstance(), "login")
+                    .replace(R.id.fragment, LoginFragment.newInstance(), "login")
                     .commit();
             return true;
         }

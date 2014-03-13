@@ -3,11 +3,14 @@ package de.goddchen.android.astrometry.fragments;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.JsonObject;
@@ -44,6 +47,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         if (storedApikey != null) {
             ((EditText) view.findViewById(R.id.apikey)).setText(storedApikey);
         }
+        TextView hintTextView = (TextView) view.findViewById(R.id.login_hint);
+        hintTextView.setText(Html.fromHtml(getString(R.string.hint_apikey)));
+        hintTextView.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     @Override
@@ -86,7 +92,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                                         )
                                                 .commit();
                                         getFragmentManager().beginTransaction()
-                                                .replace(android.R.id.content,
+                                                .replace(R.id.fragment,
                                                         JobListFragment.newInstance(), "job-list")
                                                 .commit();
                                     }
