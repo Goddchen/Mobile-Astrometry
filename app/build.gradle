@@ -10,10 +10,19 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    signingConfigs {
+        release {
+            storeFile file(System.getenv('ANDROID_STORE'))
+            storePassword System.getenv('ANDROID_STORE_PASS')
+            keyAlias 'Android Release Key'
+            keyPassword System.getenv('ANDROID_KEY_PASS')
+        }
+    }
     buildTypes {
         release {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            signingConfig signingConfigs.release
         }
     }
 }
